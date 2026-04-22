@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getSpaces } from "@/services/coworking.service";
 import SpaceDetailModal from "./components/SpaceDetailModal";
+import ReservationModal from "./components/ReservationModal";
 
 const gridPositions = [
   { col: "1 / 2", row: "1 / 2" },
@@ -33,6 +34,7 @@ export default function SpacesPage() {
   const [loading, setLoading] = useState(true);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReservaModalOpen, setReservaIsModalOpen] = useState(false);
   const [selectedSpace, setSelectedSpace] = useState(null);
 
   useEffect(() => {
@@ -334,7 +336,19 @@ export default function SpacesPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         space={selectedSpace}
+        onReserve={() => {
+          setIsModalOpen(false);
+          setReservaIsModalOpen(true);
+        }}
       />
+
+      {isReservaModalOpen && (
+        <ReservationModal
+          isOpen={isReservaModalOpen}
+          space={selectedSpace}
+          onClose={() => setReservaIsModalOpen(false)}
+        />
+      )}
     </>
   );
 }

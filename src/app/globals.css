@@ -27,7 +27,6 @@
 
   --white: #ffffff;
   --black: #000000;
-  
 }
 
 @media (prefers-color-scheme: dark) {
@@ -93,4 +92,18 @@ a {
     padding-left: 2rem;
     padding-right: 2rem;
   }
+}
+
+input,
+select {
+  padding: 0.75rem;
+  border: 1px solid var(--surface-300);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary-500);
 }
