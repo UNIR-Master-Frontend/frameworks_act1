@@ -4,7 +4,7 @@ import { getMagazines, getMagazinesByCategory } from '@/app/library/services/mag
 import MagazinesCarousel from '../MagazinesCarousel';
 import useLoading from '@/hooks/useLoading';
 
-export default function MagazinesList({ category = '' }) {
+export default function MagazinesList({ category = '', year, price, date }) {
   const [magazines, setMagazines] = useState([]);
   const { setLoading } = useLoading();
 
@@ -13,18 +13,48 @@ export default function MagazinesList({ category = '' }) {
       setLoading(true);
 
       try {
-        const data = category
+        // 🔹 1. Obtener datos base
+        let data = category
           ? await getMagazinesByCategory(category)
           : await getMagazines();
 
-        setMagazines(Array.isArray(data) ? data : []);
+        // 🔹 2. Validar
+        data = Array.isArray(data) ? data : [];
+
+        // 🔥 3. Aplicar filtros
+
+        if (year) {
+          data = data.filter(
+            (m) => String(m.year) === String(year)
+          );
+        }
+
+        if (price) {
+          data = data.filter(
+            (m) => Number(m.price) <= Number(price)
+          );
+        }
+
+        if (date) {
+          data = data.filter(
+            (m) => m.date === date
+          );
+        }
+
+        // 🔹 4. Set final
+        setMagazines(data);
       } finally {
         setLoading(false);
       }
     };
 
     loadMagazines();
-  }, [category, setLoading]);
+  }, [category, year, price, date, setLoading]);
 
-  return <MagazinesCarousel title="Listado de revistas" magazines={magazines} />;
+  return (
+    <MagazinesCarousel
+      title="Listado de revistas"
+      magazines={magazines}
+    />
+  );
 }
