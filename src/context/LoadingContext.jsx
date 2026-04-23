@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, useState } from "react";
 
-const LoadingContext = createContext(null);
+export const LoadingContext = createContext(null);
 
 export function LoadingProvider({ children }) {
   const [loadingCount, setLoadingCount] = useState(0);
