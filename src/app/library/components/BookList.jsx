@@ -4,7 +4,7 @@ import { getBooks, getBooksByCategory } from '@/app/library/services/book.servic
 import BooksCarousel from './BooksCarousel';
 import { useLoading } from '@/context/LoadingContext';
 
-export default function BookList({ category = '' }) {
+export default function BookList({ category = '', year, price, date }) {
   const [books, setBooks] = useState([]);
   const { setLoading } = useLoading();
 
@@ -13,18 +13,43 @@ export default function BookList({ category = '' }) {
       setLoading(true);
 
       try {
-        const booksData = category
+        // Obtener datos base
+        let booksData = category
           ? await getBooksByCategory(category)
           : await getBooks();
 
-        setBooks(Array.isArray(booksData) ? booksData : []);
+        //  Validación
+        booksData = Array.isArray(booksData) ? booksData : [];
+
+        // Aplicación de filtros (SIN romper API)
+
+        if (year) {
+          booksData = booksData.filter(
+            (book) => String(book.year) === String(year)
+          );
+        }
+
+        if (price) {
+          booksData = booksData.filter(
+            (book) => Number(book.price) <= Number(price)
+          );
+        }
+
+        if (date) {
+          booksData = booksData.filter(
+            (book) => book.date === date
+          );
+        }
+
+        //  Set final
+        setBooks(booksData);
       } finally {
         setLoading(false);
       }
     };
 
     loadBooks();
-  }, [category, setLoading]);
+  }, [category, year, price, date, setLoading]);
 
   return <BooksCarousel title="Listado de libros" books={books} />;
 }
