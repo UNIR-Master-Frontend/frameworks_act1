@@ -3,7 +3,7 @@ import Carousel from '@/components/Carousel/Carousel';
 import Magazine from './Magazine/Magazine';
 
 export default function MagazinesCarousel({ title = '', magazines = [], emptyMessage = '' }) {
-  return magazines.length ? (
+  return Array.isArray(magazines) && magazines.length ? (
     <Carousel title={title}>
       {magazines.map((magazine) => (
         <div className="carousel-item" key={magazine.id + magazine.nombre}>

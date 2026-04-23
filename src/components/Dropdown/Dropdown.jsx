@@ -18,7 +18,7 @@ export default function Dropdown({
       <h3>{label}</h3>
       <select name={name} value={value || ''} onChange={handleChange} disabled={disabled}>
         <option value="" disabled>Elegir</option>
-        {(options || []).map((option) => (
+        {(Array.isArray(options) ? options : []).map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>

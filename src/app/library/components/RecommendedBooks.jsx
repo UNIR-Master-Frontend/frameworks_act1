@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getRecommendedBooks } from '@/app/features/library/services/book.service';
+import { getRecommendedBooks } from '@/app/library/services/book.service';
 import BooksCarousel from './BooksCarousel';
 import { useLoading } from '@/context/LoadingContext';
 
@@ -9,15 +9,19 @@ export default function RecommendedBooks() {
   const { setLoading } = useLoading();
 
   useEffect(() => {
-    getRecommendedBooksData();
-  }, []);
+    const loadRecommendedBooks = async () => {
+      setLoading(true);
 
-  const getRecommendedBooksData = async () => {
-    setLoading(true);
-    const data = await getRecommendedBooks();
-    setRecommendedBooks(data?.recomendaciones ?? []);
-    setLoading(false);
-  };
+      try {
+        const data = await getRecommendedBooks();
+        setRecommendedBooks(Array.isArray(data?.recomendaciones) ? data.recomendaciones : []);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRecommendedBooks();
+  }, [setLoading]);
 
   return <BooksCarousel title="Libros recomendados" books={recommendedBooks} />;
 }

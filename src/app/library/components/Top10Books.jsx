@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getTop10Books } from '@/app/features/library/services/book.service';
+import { getTop10Books } from '@/app/library/services/book.service';
 import BooksCarousel from './BooksCarousel';
 import { useLoading } from '@/context/LoadingContext';
 
@@ -9,15 +9,19 @@ export default function Top10Books() {
   const { setLoading } = useLoading();
 
   useEffect(() => {
-    getBooksData();
-  }, []);
+    const loadTopBooks = async () => {
+      setLoading(true);
 
-  const getBooksData = async () => {
-    setLoading(true);
-    const data = await getTop10Books();
-    setBooks(Array.isArray(data) ? data : []);
-    setLoading(false);
-  };
+      try {
+        const data = await getTop10Books();
+        setBooks(Array.isArray(data) ? data : []);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  return <BooksCarousel title="Top 10 de libros más vendidos" books={books} />;
+    loadTopBooks();
+  }, [setLoading]);
+
+  return <BooksCarousel title="Top 10 de libros mas vendidos" books={books} />;
 }

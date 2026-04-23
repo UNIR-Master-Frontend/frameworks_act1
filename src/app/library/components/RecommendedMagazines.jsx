@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getRecommendedMagazines } from '@/app/features/library/services/magazine.service';
+import { getRecommendedMagazines } from '@/app/library/services/magazine.service';
 import MagazinesCarousel from './MagazinesCarousel';
 import { useLoading } from '@/context/LoadingContext';
 
@@ -9,15 +9,19 @@ export default function RecommendedMagazines() {
   const { setLoading } = useLoading();
 
   useEffect(() => {
-    getRecommendedMagazinesData();
-  }, []);
+    const loadRecommendedMagazines = async () => {
+      setLoading(true);
 
-  const getRecommendedMagazinesData = async () => {
-    setLoading(true);
-    const data = await getRecommendedMagazines();
-    setRecommendedMagazines(data.recomendaciones);
-    setLoading(false);
-  };
+      try {
+        const data = await getRecommendedMagazines();
+        setRecommendedMagazines(Array.isArray(data?.recomendaciones) ? data.recomendaciones : []);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRecommendedMagazines();
+  }, [setLoading]);
 
   return <MagazinesCarousel title="Revistas recomendadas" magazines={recommendedMagazines} />;
 }

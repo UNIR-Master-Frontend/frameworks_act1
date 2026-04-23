@@ -18,25 +18,25 @@ const imagesmagazines = [
 
 export default function Magazine({ magazine }) {
   const router = useRouter();
-
-  const imagesmagazinesrandom = imagesmagazines[Math.floor(Math.random() * imagesmagazines.length)];
+  const imageIndex = Number(magazine?.id ?? 1) % imagesmagazines.length;
+  const selectedImage = imagesmagazines[imageIndex];
 
   const goToDetail = () => {
-    router.push(`/features/library/views/magazine/${magazine.id}`);
+    router.push(`/library/magazines/${magazine.id}`);
   };
 
   return (
     <Card onClick={goToDetail}>
       <div className="book-img">
-        <img src={imagesmagazinesrandom} alt="Imagen de revista" />
+        <img src={selectedImage} alt="Imagen de revista" />
       </div>
       <div className="magazine-content">
-        <h4>Revista edición {magazine.edicion}</h4>
+        <h4>Revista edicion {magazine.edicion}</h4>
         <h5>{magazine.nombre}</h5>
-        <h5>Categoria: {magazine.categoria.toLocaleUpperCase()}</h5>
-        <small>€{magazine.precio}</small>
+        <h5>Categoria: {magazine.categoria?.toLocaleUpperCase() ?? '-'}</h5>
+        <small>${magazine.precio}</small>
         <div className="magazine-link">
-          Más Información <span className="arrow">→</span>
+          Mas informacion <span className="arrow">-&gt;</span>
         </div>
       </div>
     </Card>

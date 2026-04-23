@@ -18,25 +18,25 @@ const imagesbooks = [
 
 export default function Book({ book }) {
   const router = useRouter();
-
-  const imagesbooksrandom = imagesbooks[Math.floor(Math.random() * imagesbooks.length)];
+  const imageIndex = Number(book?.id ?? 1) % imagesbooks.length;
+  const selectedImage = imagesbooks[imageIndex];
 
   const goToDetail = () => {
-    router.push(`/features/library/views/books/${book.id}`);
+    router.push(`/library/books/${book.id}`);
   };
 
   return (
     <Card onClick={goToDetail}>
       <div className="book-img">
-        <img src={imagesbooksrandom} alt="Imagen de libro" />
+        <img src={selectedImage} alt="Imagen de libro" />
       </div>
       <div className="book-content">
         <h4>{book.nombre}</h4>
         <h5>{book.autor}</h5>
         <h5>Categoria: {book.categoria?.toLocaleUpperCase() ?? '-'}</h5>
-        <small>€{book.precio}</small>
+        <small>${book.precio}</small>
         <div className="book-link">
-          Más Información <span className="arrow">→</span>
+          Mas informacion <span className="arrow">-&gt;</span>
         </div>
       </div>
     </Card>

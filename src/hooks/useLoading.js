@@ -1,7 +1,5 @@
-import { useContext } from 'react';
-import { LoadingContext } from '@/context/LoadingContext';
+import { useLoading as useLoadingContext } from '@/context/LoadingContext';
 
 export default function useLoading() {
-  const context = useContext(LoadingContext);
-  return context;
+  return useLoadingContext();
 }

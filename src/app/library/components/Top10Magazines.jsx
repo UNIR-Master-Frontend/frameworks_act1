@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getTop10Magazines } from '@/app/features/library/services/magazine.service';
+import { getTop10Magazines } from '@/app/library/services/magazine.service';
 import MagazinesCarousel from './MagazinesCarousel';
 import { useLoading } from '@/context/LoadingContext';
 
@@ -9,15 +9,19 @@ export default function Top10Magazines() {
   const { setLoading } = useLoading();
 
   useEffect(() => {
-    getMagazinesData();
-  }, []);
+    const loadTopMagazines = async () => {
+      setLoading(true);
 
-  const getMagazinesData = async () => {
-    setLoading(true);
-    const data = await getTop10Magazines();
-    setMagazines(data);
-    setLoading(false);
-  };
+      try {
+        const data = await getTop10Magazines();
+        setMagazines(Array.isArray(data) ? data : []);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  return <MagazinesCarousel title="Top 10 de revistas más vendidas" magazines={magazines} />;
+    loadTopMagazines();
+  }, [setLoading]);
+
+  return <MagazinesCarousel title="Top 10 de revistas mas vendidas" magazines={magazines} />;
 }

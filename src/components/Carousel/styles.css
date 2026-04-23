@@ -53,13 +53,13 @@
 @media (width >= 600px) {
   .carousel-content {
     grid-auto-flow: column;
-    grid-auto-columns: calc(100% / 2);
+    grid-auto-columns: calc((100% - 2rem) / 2);
   }
 }
 
 @media (width >= 1024px) {
   .carousel-content {
     grid-auto-flow: column;
-    grid-auto-columns: calc(100% / 4);
+    grid-auto-columns: calc((100% - 6rem) / 4);
   }
 }

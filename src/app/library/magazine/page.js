@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function MagazinesViewsAliasPage() {
+export default function MagazineAliasPage() {
   redirect("/library/magazines");
 }

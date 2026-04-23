@@ -9,14 +9,14 @@ export default function LibraryLayout({ children }) {
   return (
     <>
       <div className="library-navbar">
-        <button onClick={() => router.push('/features/library/views/books')}>
+        <button onClick={() => router.push('/library/books')}>
           Libros
         </button>
-        <button onClick={() => router.push('/features/library/views/magazine')}>
+        <button onClick={() => router.push('/library/magazines')}>
           Revistas
         </button>
         {user && (
-          <button onClick={() => router.push('/features/library/views/purchases')}>
+          <button onClick={() => router.push('/library/purchases')}>
             Mis compras
           </button>
         )}

@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getSimilarMagazines } from '@/app/features/library/services/magazine.service';
+import { getSimilarMagazines } from '@/app/library/services/magazine.service';
 import MagazinesCarousel from './MagazinesCarousel';
 import { useLoading } from '@/context/LoadingContext';
 
@@ -9,15 +9,21 @@ export default function SimilarMagazines({ id }) {
   const { setLoading } = useLoading();
 
   useEffect(() => {
-    getSimilarMagazinesData();
-  }, []);
+    if (!id) return;
 
-  const getSimilarMagazinesData = async () => {
-    setLoading(true);
-    const data = await getSimilarMagazines(id);
-    setSimilarMagazines(data);
-    setLoading(false);
-  };
+    const loadSimilarMagazines = async () => {
+      setLoading(true);
+
+      try {
+        const data = await getSimilarMagazines(id);
+        setSimilarMagazines(Array.isArray(data) ? data : []);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSimilarMagazines();
+  }, [id, setLoading]);
 
   return <MagazinesCarousel title="Revistas similares" magazines={similarMagazines} />;
 }
