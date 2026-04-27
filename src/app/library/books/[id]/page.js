@@ -5,6 +5,7 @@ import { getBookById } from '@/app/library/services/book.service';
 import useLoading from '@/hooks/useLoading';
 import SimilarBooks from '@/app/library/components/SimilarBooks';
 import BackButton from '@/components/BackButton/BackButton';
+import styles from '@/app/library/detail.module.css';
 
 export default function BookDetailPage() {
   const { id } = useParams();
@@ -22,50 +23,69 @@ export default function BookDetailPage() {
   }, [id, setLoading]);
 
   const addToCounter = (value) => {
-    setCounter((current) => current + value);
+    setCounter((current) => Math.min(5, Math.max(1, current + value)));
   };
 
   if (!book) return <></>;
 
+  const originalPrice = Number((book.precio * 1.11).toFixed(2));
+
   return (
     <>
-      <div className="container overlay">
-        <div className="p-4">
+      <div className={styles.detailPage}>
+        <div className={styles.detailTopbar}>
           <BackButton />
         </div>
-        <div className="grid">
-          <section className="intro-container">
-            <h1>{book.nombre}</h1>
-            <h3>{book.autor}</h3>
-            <span>
-              <h3>${book.precio + 50}</h3>
-              <h2>${book.precio}</h2>
-            </span>
-          </section>
-          <div className="image-container">
-            <img className="book-image" src="/images/book.jpg" alt="Libro" />
+
+        <div className={styles.detailGrid}>
+          <div className={`${styles.visualPanel} ${styles.bookVisual}`}>
+            <div className={styles.visualGlow} />
+            <img className={styles.visualImage} src="/images/jpg/book.jpg" alt={book.nombre} />
           </div>
-          <section className="info-container">
-            <h3>Editorial</h3>
-            <p>{book.editorial}</p>
-          </section>
-          <section className="quantity-container">
-            <h3>Cantidad</h3>
-            <div className="quantity-input-container">
-              <button className="text minus" onClick={() => addToCounter(-1)} disabled={counter === 1}>-</button>
-              <input id="quantity" type="number" value={counter} readOnly />
-              <button className="text plus" onClick={() => addToCounter(1)} disabled={counter === 5}>+</button>
-            </div>
-            <small>Maximo 5 unidades</small>
-            <div className="buttons-container">
-              <button className="primary" onClick={() => alert('Compra realizada correctamente')}>
-                Comprar
-              </button>
-            </div>
-          </section>
+
+          <div className={styles.contentPanel}>
+            <header className={styles.headlineBlock}>
+              <p className={styles.eyebrow}>Libro recomendado</p>
+              <h1 className={styles.title}>{book.nombre}</h1>
+              <p className={styles.subtitle}>{book.autor}</p>
+              <div className={styles.priceRow}>
+                <p className={styles.oldPrice}>${originalPrice}</p>
+                <p className={styles.currentPrice}>${book.precio}</p>
+              </div>
+            </header>
+
+            <section className={styles.infoStack}>
+              <div className={styles.infoBlock}>
+                <p className={styles.label}>Editorial</p>
+                <p className={styles.value}>{book.editorial}</p>
+              </div>
+            </section>
+
+            <section className={styles.purchaseCard}>
+              <h2 className={styles.purchaseTitle}>Cantidad</h2>
+              <div className={styles.purchaseActions}>
+                <div className={styles.quantityControls}>
+                  <button className={styles.quantityButton} onClick={() => addToCounter(-1)} disabled={counter === 1}>
+                    -
+                  </button>
+                  <input className={styles.quantityValue} id="quantity" type="number" value={counter} readOnly />
+                  <button className={styles.quantityButton} onClick={() => addToCounter(1)} disabled={counter === 5}>
+                    +
+                  </button>
+                </div>
+                <button className={styles.primaryButton} onClick={() => alert('Compra realizada correctamente')}>
+                  Comprar
+                </button>
+              </div>
+              <p className={styles.quantityHint}>Maximo 5 unidades</p>
+            </section>
+          </div>
         </div>
       </div>
-      <SimilarBooks id={book.id} />
+
+      <div className={styles.similarSection}>
+        <SimilarBooks id={book.id} />
+      </div>
     </>
   );
 }

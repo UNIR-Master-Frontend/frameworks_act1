@@ -5,6 +5,7 @@ import { getMagazineById } from '@/app/library/services/magazine.service';
 import useLoading from '@/hooks/useLoading';
 import SimilarMagazines from '@/app/library/components/SimilarMagazines';
 import BackButton from '@/components/BackButton/BackButton';
+import styles from '@/app/library/detail.module.css';
 
 export default function MagazineDetailPage() {
   const { id } = useParams();
@@ -32,23 +33,49 @@ export default function MagazineDetailPage() {
 
   return (
     <>
-      <div className="mag-detail-page">
-        <BackButton />
-        <div className="mag-detail-main">
-          <img src="/images/magazine.jpg" alt="Imagen de revista" />
-          <div>
-            <h1>Revista edicion {magazine.edicion}</h1>
-            <p><strong>Editorial:</strong> {magazine.editorial}</p>
-            <p><strong>Categoria:</strong> {magazine.categoria}</p>
-            <p>{`Revista ${magazine.periodicidad} de la editorial ${magazine.editorial}`}</p>
-            <p className="price">${magazine.precio}</p>
-            <button className="add-btn primary" onClick={handleAddToCart}>
-              Anadir al carrito
-            </button>
+      <div className={styles.detailPage}>
+        <div className={styles.detailTopbar}>
+          <BackButton />
+        </div>
+
+        <div className={styles.detailGrid}>
+          <div className={`${styles.visualPanel} ${styles.magazineVisual}`}>
+            <div className={styles.visualGlow} />
+            <img className={styles.visualImage} src="/images/jpg/magazine.jpg" alt={magazine.nombre} />
+          </div>
+
+          <div className={styles.contentPanel}>
+            <header className={styles.headlineBlock}>
+              <p className={styles.eyebrow}>Revista destacada</p>
+              <h1 className={styles.title}>Revista edicion {magazine.edicion}</h1>
+            </header>
+
+            <section className={styles.infoStack}>
+              <div className={styles.infoBlock}>
+                <p className={styles.label}>Editorial</p>
+                <p className={styles.value}>{magazine.editorial}</p>
+              </div>
+              <div className={styles.infoBlock}>
+                <p className={styles.label}>Categoria</p>
+                <p className={styles.value}>{magazine.categoria}</p>
+              </div>
+              <p className={styles.summary}>
+                {`Revista ${magazine.periodicidad} de la editorial ${magazine.editorial}`}
+              </p>
+              <div className={styles.priceRow}>
+                <p className={styles.currentPrice}>${magazine.precio}</p>
+              </div>
+              <button className={styles.primaryButton} onClick={handleAddToCart}>
+                Anadir al carrito
+              </button>
+            </section>
           </div>
         </div>
       </div>
-      <SimilarMagazines id={magazine.id} />
+
+      <div className={styles.similarSection}>
+        <SimilarMagazines id={magazine.id} />
+      </div>
     </>
   );
 }
