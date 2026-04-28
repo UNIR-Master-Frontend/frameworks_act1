@@ -126,9 +126,13 @@ export default function Home() {
             Únete a más de 1.500 estudiantes que ya confían en Nexus para sus
             materiales de estudio y espacios de trabajo.
           </span>
-          <a onClick={() => router.push("/library")}>
-            <button className={styles['primary-white']}>Explorar catálogo</button>
-          </a>
+
+          <Button 
+          label= "Explorar catálogo" 
+          variant="primary-white" 
+          onClick={() => router.push("/library")} 
+          />
+        
         </section>
       </div>
     </>

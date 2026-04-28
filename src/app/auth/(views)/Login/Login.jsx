@@ -13,7 +13,7 @@ export default function Login() {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const { setLoading } = useLoading();
-  const { setUserLogin } = useUser();
+  const { setUser: setUserLogin } = useUser();
   const router = useRouter(); 
 
   const onSubmit = async (e) => {
