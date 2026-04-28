@@ -3,6 +3,7 @@
 import styles from "./HomePage.module.css";
 import useUser from "../../hooks/useUser";
 import { useRouter } from "next/navigation";
+import Button from '@/components/Button/Button';
 
 export default function Home() {
   const { user } = useUser();
@@ -25,15 +26,23 @@ export default function Home() {
             académicos, zonas de estudio colaborativo y una cafetería pensada
             para estudiantes.
           </h2>
-          <a onClick={() => router.push("/library")}>
-            <button className={styles.primary}>Explorar catálogo</button>
-          </a>
+          <div className={styles.botonesContainer}>
+          <Button 
+          label= "Explorar catálogo" 
+          variant="primary" 
+          onClick={() => router.push("/library")} 
+          />
 
+    
           {!user && (
-            <a onClick={() => router.push("/auth")}>
-              <button className={styles.secondary}>Iniciar Sesión</button>
-            </a>
-          )}
+            <Button 
+            label= "Iniciar Sesión" 
+            variant="secondary" 
+            onClick={() => router.push("/auth")} 
+            />
+            
+          )} 
+          </div>
 
           <video className={styles['hero-video']} autoPlay loop muted playsInline>
             <source src="/video/hero.mp4" type="video/mp4" />

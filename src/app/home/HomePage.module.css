@@ -47,6 +47,13 @@
   object-fit: cover;
 }
 
+.botonesContainer {
+  display: flex;
+  gap: 16px; 
+  align-items: center;
+  
+}
+
 .hero button.primary {
   display: block;
   width: 100%;
@@ -232,8 +239,19 @@
     font-size: 1.25rem;
     line-height: 1.875rem;
     padding: 0 2rem;
+    display: inline-block;
+    width: auto;
+    margin-top: 0;
   }
 
+.botonesContainer {
+  display: flex;
+  gap: 16px; 
+  align-items: center;
+  margin-left: 2rem;
+  margin-right: 1rem;
+  margin-bottom: 0;
+  }
   .hero button.primary,
   .hero button.secondary {
     display: inline-block;
@@ -338,6 +356,14 @@
   .hero button.secondary {
     display: inline-block;
     width: auto;
+  }
+
+  .botonesContainer {
+  display: flex;
+  gap: 16px; 
+  align-items: center;
+  margin-left: 4rem;
+  margin-right: 1rem;
   }
 
   .hero button.primary {
