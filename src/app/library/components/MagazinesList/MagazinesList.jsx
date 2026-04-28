@@ -3,14 +3,17 @@ import { useEffect, useState } from 'react';
 import { getMagazines, getMagazinesByCategory } from '@/app/library/services/magazine.service';
 import MagazinesCarousel from '../MagazinesCarousel';
 import useLoading from '@/hooks/useLoading';
+import CarouselSkeleton from '../CarouselSkeleton';
 
 export default function MagazinesList({ category = '', year, price, date }) {
   const [magazines, setMagazines] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { setLoading } = useLoading();
 
   useEffect(() => {
     const loadMagazines = async () => {
       setLoading(true);
+      setIsLoading(true);
 
       try {
         // 🔹 1. Obtener datos base
@@ -44,6 +47,7 @@ export default function MagazinesList({ category = '', year, price, date }) {
         // 🔹 4. Set final
         setMagazines(data);
       } finally {
+        setIsLoading(false);
         setLoading(false);
       }
     };
@@ -51,10 +55,9 @@ export default function MagazinesList({ category = '', year, price, date }) {
     loadMagazines();
   }, [category, year, price, date, setLoading]);
 
-  return (
-    <MagazinesCarousel
-      title="Listado de revistas"
-      magazines={magazines}
-    />
-  );
+  if (isLoading) {
+    return <CarouselSkeleton />;
+  }
+
+  return <MagazinesCarousel title="Listado de revistas" magazines={magazines} />;
 }

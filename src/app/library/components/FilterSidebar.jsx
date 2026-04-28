@@ -1,15 +1,13 @@
 'use client';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function FilterSidebar() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const applyFilters = (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.target);
-
     const params = new URLSearchParams();
 
     formData.forEach((value, key) => {
@@ -20,22 +18,22 @@ export default function FilterSidebar() {
   };
 
   return (
-    <aside className="fixed top-[60px] left-0 w-64 h-[calc(100vh-60px)] bg-white border-r p-4 shadow">
-      <h3 className="font-bold mb-4">Filtros</h3>
+    <aside className="fixed top-[72px] left-0 hidden h-[calc(100vh-72px)] w-64 border-r border-slate-200 bg-white/95 p-5 shadow-sm backdrop-blur lg:block">
+      <h3 className="mb-4 font-bold text-slate-900">Filtros</h3>
 
       <form onSubmit={applyFilters}>
-        <select name="category" className="w-full p-2 border rounded mb-3">
+        <select name="category" className="mb-3 w-full rounded border border-slate-300 p-2">
           <option value="">Todas</option>
-          <option value="monografias">Monografías</option>
+          <option value="monografias">Monografias</option>
         </select>
 
-        <input name="year" type="number" placeholder="Año" className="w-full p-2 border rounded mb-3" />
+        <input name="year" type="number" placeholder="Ano" className="mb-3 w-full rounded border border-slate-300 p-2" />
 
-        <input name="price" type="number" placeholder="Precio máx" className="w-full p-2 border rounded mb-3" />
+        <input name="price" type="number" placeholder="Precio max" className="mb-3 w-full rounded border border-slate-300 p-2" />
 
-        <input name="date" type="date" className="w-full p-2 border rounded mb-3" />
+        <input name="date" type="date" className="mb-3 w-full rounded border border-slate-300 p-2" />
 
-        <button className="w-full bg-blue-600 text-white py-2 rounded">
+        <button className="w-full rounded bg-[var(--primary-600)] py-2 font-semibold text-white">
           Aplicar
         </button>
       </form>

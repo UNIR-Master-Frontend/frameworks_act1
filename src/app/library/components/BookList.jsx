@@ -3,14 +3,17 @@ import { useEffect, useState } from 'react';
 import { getBooks, getBooksByCategory } from '@/app/library/services/book.service';
 import BooksCarousel from './BooksCarousel';
 import { useLoading } from '@/context/LoadingContext';
+import CarouselSkeleton from './CarouselSkeleton';
 
 export default function BookList({ category = '', year, price, date }) {
   const [books, setBooks] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { setLoading } = useLoading();
 
   useEffect(() => {
     const loadBooks = async () => {
       setLoading(true);
+      setIsLoading(true);
 
       try {
         // Obtener datos base
@@ -44,12 +47,17 @@ export default function BookList({ category = '', year, price, date }) {
         //  Set final
         setBooks(booksData);
       } finally {
+        setIsLoading(false);
         setLoading(false);
       }
     };
 
     loadBooks();
   }, [category, year, price, date, setLoading]);
+
+  if (isLoading) {
+    return <CarouselSkeleton />;
+  }
 
   return <BooksCarousel title="Listado de libros" books={books} />;
 }

@@ -27,7 +27,7 @@
   display: grid;
   grid-auto-columns: 1;
   overflow-x: auto;
-  padding: 1rem;
+  padding: 1rem 0;
 
   scrollbar-width: none;
   -ms-overflow-style: none;

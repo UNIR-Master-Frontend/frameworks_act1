@@ -1,42 +1,58 @@
 'use client';
+import Link from 'next/link';
+import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import useUser from '@/hooks/useUser';
 import FilterSidebar from './components/FilterSidebar';
+import styles from './layout.module.css';
 
 export default function LibraryLayout({ children }) {
   const { user } = useUser();
   const router = useRouter();
   const pathname = usePathname();
 
-  //  Mostrar sidebar SOLO en books y magazines
-  const showSidebar =
-    pathname.includes('/library/books') ||
-    pathname.includes('/library/magazines');
+  const isBooksRoute = pathname.startsWith('/library/books');
+  const isMagazinesRoute = pathname.startsWith('/library/magazines') || pathname.startsWith('/library/magazine');
+  const isPurchasesRoute = pathname.startsWith('/library/purchases');
+
+  const showSidebar = isBooksRoute || isMagazinesRoute;
+
+  useEffect(() => {
+    router.prefetch('/library/books');
+    router.prefetch('/library/magazines');
+    router.prefetch('/library/purchases');
+  }, [router]);
 
   return (
-    <>
-      {/* NAVBAR */}
-      <div className="library-navbar h-[60px] flex items-center gap-4 px-4 border-b bg-white z-20 relative">
-        <button onClick={() => router.push('/library/books')}>
+    <div className={styles.libraryShell}>
+      <div className={styles.subnav}>
+        <Link
+          href="/library/books"
+          className={`${styles.subnavButton} ${isBooksRoute ? styles.subnavButtonActive : ''}`.trim()}
+        >
           Libros
-        </button>
-        <button onClick={() => router.push('/library/magazines')}>
+        </Link>
+        <Link
+          href="/library/magazines"
+          className={`${styles.subnavButton} ${isMagazinesRoute ? styles.subnavButtonActive : ''}`.trim()}
+        >
           Revistas
-        </button>
+        </Link>
         {user && (
-          <button onClick={() => router.push('/library/purchases')}>
+          <Link
+            href="/library/purchases"
+            className={`${styles.subnavButton} ${isPurchasesRoute ? styles.subnavButtonActive : ''}`.trim()}
+          >
             Mis compras
-          </button>
+          </Link>
         )}
       </div>
 
-      {/* SIDEBAR  */}
       {showSidebar && <FilterSidebar />}
 
-      {/* CONTENIDO */}
-      <main className={`${showSidebar ? 'ml-64' : ''} mt-[60px] p-4`}>
+      <main className={`${styles.content} ${showSidebar ? styles.contentWithSidebar : ''}`.trim()}>
         {children}
       </main>
-    </>
+    </div>
   );
 }
