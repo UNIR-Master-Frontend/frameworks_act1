@@ -1,14 +1,22 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getMagazines, getMagazinesByCategory } from '@/app/library/services/magazine.service';
+import { getMagazines } from '@/app/library/services/magazine.service';
 import MagazinesCarousel from '../MagazinesCarousel';
 import useLoading from '@/hooks/useLoading';
-import CarouselSkeleton from '../CarouselSkeleton';
 
-export default function MagazinesList({ category = '', year, price, date }) {
+export default function MagazinesList({ category = '', year, priceMin, priceMax }) {
   const [magazines, setMagazines] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { setLoading } = useLoading();
+
+  // normalizador 
+  const normalize = (text) =>
+    text
+      ?.toString()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
 
   useEffect(() => {
     const loadMagazines = async () => {
@@ -16,36 +24,55 @@ export default function MagazinesList({ category = '', year, price, date }) {
       setIsLoading(true);
 
       try {
-        // 🔹 1. Obtener datos base
-        let data = category
-          ? await getMagazinesByCategory(category)
-          : await getMagazines();
+        let data = await getMagazines();
 
-        // 🔹 2. Validar
+        // validar
         data = Array.isArray(data) ? data : [];
 
-        // 🔥 3. Aplicar filtros
+        // DEBUG 
+        const uniqueCategories = [
+          ...new Set(data.map((m) => m.categoria)),
+        ];
+        console.log('📰 CATEGORIAS REVISTAS:', uniqueCategories);
 
+        // FILTRO POR CATEGORÍA
+        if (category) {
+          const normalizedCategory = normalize(category);
+
+          data = data.filter((m) => {
+            const cat = normalize(m?.categoria || '');
+            return cat === normalizedCategory;
+          });
+        }
+
+        // FILTRO POR AÑO
         if (year) {
           data = data.filter(
-            (m) => String(m.year) === String(year)
+            (m) =>
+              String(m.anio_publicacion) === String(year)
           );
         }
 
-        if (price) {
+        // PRECIO MÍNIMO
+        if (priceMin) {
           data = data.filter(
-            (m) => Number(m.price) <= Number(price)
+            (m) =>
+              Number(m.precio) >= Number(priceMin)
           );
         }
 
-        if (date) {
+        // PRECIO MÁXIMO
+        if (priceMax) {
           data = data.filter(
-            (m) => m.date === date
+            (m) =>
+              Number(m.precio) <= Number(priceMax)
           );
         }
 
-        // 🔹 4. Set final
         setMagazines(data);
+      } catch (error) {
+        console.error('Error cargando revistas:', error);
+        setMagazines([]);
       } finally {
         setIsLoading(false);
         setLoading(false);
@@ -53,11 +80,27 @@ export default function MagazinesList({ category = '', year, price, date }) {
     };
 
     loadMagazines();
-  }, [category, year, price, date, setLoading]);
+  }, [category, year, priceMin, priceMax, setLoading]);
 
+  // loading
   if (isLoading) {
-    return <CarouselSkeleton />;
+    return <p className="p-4">Cargando revistas...</p>;
   }
 
-  return <MagazinesCarousel title="Listado de revistas" magazines={magazines} />;
+  // sin resultados
+  if (magazines.length === 0) {
+    return (
+      <p className="p-4 text-gray-500">
+        No hay revistas para este filtro
+      </p>
+    );
+  }
+
+
+  return (
+    <MagazinesCarousel
+      title="Listado de revistas"
+      magazines={magazines}
+    />
+  );
 }

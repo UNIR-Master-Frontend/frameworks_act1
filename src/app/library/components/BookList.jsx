@@ -1,14 +1,23 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getBooks, getBooksByCategory } from '@/app/library/services/book.service';
+import { getBooks } from '@/app/library/services/book.service';
 import BooksCarousel from './BooksCarousel';
 import { useLoading } from '@/context/LoadingContext';
 import CarouselSkeleton from './CarouselSkeleton';
 
-export default function BookList({ category = '', year, price, date }) {
+export default function BookList({ category = '', year, priceMin, priceMax }) {
   const [books, setBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { setLoading } = useLoading();
+
+  // normalizador (para categoría)
+  const normalize = (text) =>
+    text
+      ?.toString()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
 
   useEffect(() => {
     const loadBooks = async () => {
@@ -16,36 +25,55 @@ export default function BookList({ category = '', year, price, date }) {
       setIsLoading(true);
 
       try {
-        // Obtener datos base
-        let booksData = category
-          ? await getBooksByCategory(category)
-          : await getBooks();
+        let booksData = await getBooks();
 
-        //  Validación
+        // validar respuesta
         booksData = Array.isArray(booksData) ? booksData : [];
 
-        // Aplicación de filtros (SIN romper API)
+        // DEBUG 
+        const uniqueCategories = [
+          ...new Set(booksData.map((b) => b.categoria)),
+        ];
+        console.log('🏷️ CATEGORIAS API:', uniqueCategories);
 
+        // FILTRO POR CATEGORÍA
+        if (category) {
+          const normalizedCategory = normalize(category);
+
+          booksData = booksData.filter((book) => {
+            const cat = normalize(book?.categoria || '');
+            return cat === normalizedCategory;
+          });
+        }
+
+        // FILTRO POR AÑO
         if (year) {
           booksData = booksData.filter(
-            (book) => String(book.year) === String(year)
+            (book) =>
+              String(book.anio_publicacion) === String(year)
           );
         }
 
-        if (price) {
+        // PRECIO MÍNIMO
+        if (priceMin) {
           booksData = booksData.filter(
-            (book) => Number(book.price) <= Number(price)
+            (book) =>
+              Number(book.precio) >= Number(priceMin)
           );
         }
 
-        if (date) {
+        // PRECIO MÁXIMO
+        if (priceMax) {
           booksData = booksData.filter(
-            (book) => book.date === date
+            (book) =>
+              Number(book.precio) <= Number(priceMax)
           );
         }
 
-        //  Set final
         setBooks(booksData);
+      } catch (error) {
+        console.error('Error cargando libros:', error);
+        setBooks([]);
       } finally {
         setIsLoading(false);
         setLoading(false);
@@ -53,11 +81,27 @@ export default function BookList({ category = '', year, price, date }) {
     };
 
     loadBooks();
-  }, [category, year, price, date, setLoading]);
+  }, [category, year, priceMin, priceMax, setLoading]);
 
+  // loading
   if (isLoading) {
     return <CarouselSkeleton />;
   }
 
-  return <BooksCarousel title="Listado de libros" books={books} />;
+  // sin resultados
+  if (books.length === 0) {
+    return (
+      <p className="p-4 text-gray-500">
+        No hay libros para este filtro
+      </p>
+    );
+  }
+
+
+  return (
+    <BooksCarousel
+      title="Listado de libros"
+      books={books}
+    />
+  );
 }

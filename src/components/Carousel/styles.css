@@ -21,11 +21,13 @@
   background: #ccc;
 }
 
+/*  FIX  */
 .carousel-content {
   gap: 2rem;
   align-items: center;
   display: grid;
-  grid-auto-columns: 1;
+
+  
   overflow-x: auto;
   padding: 1rem 0;
 
@@ -50,6 +52,15 @@
   height: 100%;
 }
 
+/* MOBILE FIX (CLAVE) */
+@media (max-width: 599px) {
+  .carousel-content {
+    grid-auto-flow: column;
+    grid-auto-columns: 80%;
+  }
+}
+
+/* TABLET */
 @media (width >= 600px) {
   .carousel-content {
     grid-auto-flow: column;
@@ -57,6 +68,7 @@
   }
 }
 
+/* DESKTOP */
 @media (width >= 1024px) {
   .carousel-content {
     grid-auto-flow: column;

@@ -1,20 +1,24 @@
+/* CONTENEDOR GENERAL */
 .libraryShell {
   width: 100%;
+  overflow-x: hidden; 
 }
 
+/* NAV */
 .subnav {
   position: sticky;
   top: 0;
-  z-index: 30;
   min-height: 72px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 2rem;
   padding: 0 2rem;
-  background: transparent;
+  background: white;
+  border-bottom: 1px solid #eee;
 }
 
+/* BOTONES NAV */
 .subnavButton {
   border: 0;
   background: transparent;
@@ -24,7 +28,6 @@
   font-weight: 700;
   cursor: pointer;
   text-decoration: none;
-  text-decoration-thickness: 2px;
   text-underline-offset: 4px;
   transition: color 0.2s ease;
 }
@@ -38,21 +41,29 @@
   text-decoration: underline;
 }
 
+/* CONTENIDO */
 .content {
-  padding: 1.5rem 1rem 0;
+  padding: 0.5rem 1rem 0;
   min-height: 70vh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
+/* DESKTOP: sidebar activo */
 .contentWithSidebar {
-  margin-left: 0;
+  margin-left: 256px;
+  width: calc(100% - 256px);
 }
 
-@media (min-width: 1024px) {
+/*  TABLET Y MOBILE (FIX) */
+@media (max-width: 1024px) {
   .content {
-    padding: 1.75rem 2rem 0;
+    padding: 1rem;
   }
 
   .contentWithSidebar {
-    margin-left: 256px;
+    margin-left: 0;
+    width: 100%;
   }
 }
