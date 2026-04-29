@@ -1,5 +1,6 @@
 'use client';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 export default function FilterSidebar({ onClose }) {
   const router = useRouter();
@@ -8,56 +9,96 @@ export default function FilterSidebar({ onClose }) {
 
   const isBooks = pathname.startsWith('/library/books');
 
-  // categorías alineadas con backend
   const bookCategories = [
-    { value: 'texto', label: 'TEXTO' },
-    { value: 'guias', label: 'GUÍAS' },
-    { value: 'manuales', label: 'MANUALES' },
-    { value: 'monografias', label: 'MONOGRAFÍAS' },
-    { value: 'referencias', label: 'REFERENCIAS' },
+    'REFERENCIAS',
+    'MONOGRAFIAS',
+    'GUIAS',
+    'TEXTO',
+    'MANUALES',
   ];
 
   const magazineCategories = [
-    { value: 'divulgacion', label: 'DIVULGACIÓN' },
-    { value: 'boletines institucionales', label: 'BOLETINES INSTITUCIONALES' },
-    { value: 'cientificas', label: 'CIENTÍFICAS' },
+    'DIVULGACION',
+    'BOLETINES INSTITUCIONALES',
+    'CIENTIFICAS',
   ];
 
   const categories = isBooks ? bookCategories : magazineCategories;
 
-  // valores actuales desde URL
-  const currentCategory = searchParams.get('category') || '';
-  const currentYear = searchParams.get('year') || '';
-  const currentPriceMin = searchParams.get('priceMin') || '';
-  const currentPriceMax = searchParams.get('priceMax') || '';
+  // 🔥 estados
+  const [category, setCategory] = useState('');
+  const [year, setYear] = useState('');
+  const [priceMin, setPriceMin] = useState('');
+  const [priceMax, setPriceMax] = useState('');
 
-  // aplicar filtros SOLO con botón
+  // 🔄 sync con URL
+  useEffect(() => {
+    setCategory(searchParams.get('category') || '');
+    setYear(searchParams.get('year') || '');
+    setPriceMin(searchParams.get('priceMin') || '');
+    setPriceMax(searchParams.get('priceMax') || '');
+  }, [searchParams]);
+
+  // 🔐 validaciones
+  const handleYearChange = (value) => {
+    if (value < 0) return;
+    setYear(value);
+  };
+
+  const handlePriceMinChange = (value) => {
+    if (value < 0) return;
+    setPriceMin(value);
+  };
+
+  const handlePriceMaxChange = (value) => {
+    if (value < 0) return;
+    setPriceMax(value);
+  };
+
+  // 🚀 aplicar filtros
   const applyFilters = (e) => {
     e.preventDefault();
 
-    const formData = new FormData(e.target);
+    if (priceMin && priceMax && Number(priceMin) > Number(priceMax)) {
+      alert('El precio mínimo no puede ser mayor que el máximo');
+      return;
+    }
+
     const params = new URLSearchParams();
 
-    formData.forEach((value, key) => {
-      if (value) {
-        params.set(key, value.toString().toLowerCase());
-      }
-    });
+    if (category) params.set('category', category.toLowerCase());
+    if (year) params.set('year', year);
+    if (priceMin) params.set('priceMin', priceMin);
+    if (priceMax) params.set('priceMax', priceMax);
 
     router.push(`${pathname}?${params.toString()}`);
 
     if (onClose) onClose();
   };
 
-  // limpiar filtros
+  // 🧹 limpiar filtros
   const clearFilters = () => {
+    setCategory('');
+    setYear('');
+    setPriceMin('');
+    setPriceMax('');
+
     router.push(pathname);
+
     if (onClose) onClose();
   };
 
   return (
-    <aside className="bg-white p-4 overflow-y-auto w-full lg:w-64 lg:fixed lg:top-[90px] lg:left-0 lg:h-[calc(100vh-90px)] border-r border-slate-200">
-      
+    <aside
+      className="
+        bg-slate-100 p-5
+        w-full lg:w-64
+        lg:fixed lg:top-[90px] lg:left-0 lg:h-[calc(100vh-90px)]
+        border-r border-slate-200
+        overflow-y-auto
+        box-border
+      "
+    >
       <h3 className="mb-4 text-lg font-semibold text-slate-800">
         Filtros
       </h3>
@@ -66,26 +107,27 @@ export default function FilterSidebar({ onClose }) {
         
         {/* Categoría */}
         <select
-          name="category"
-          defaultValue={currentCategory}
-          className="mb-3 w-full rounded border border-slate-300 p-2"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="mb-3 w-full rounded border border-slate-300 p-2 bg-white"
         >
           <option value="">Todas</option>
-
           {categories.map((cat) => (
-            <option key={cat.value} value={cat.value}>
-              {cat.label}
+            <option key={cat} value={cat}>
+              {cat}
             </option>
           ))}
         </select>
 
         {/* Año */}
         <input
-          name="year"
           type="number"
           placeholder="Año"
-          defaultValue={currentYear}
-          className="mb-3 w-full rounded border border-slate-300 p-2"
+          value={year}
+          min="0"
+          max={new Date().getFullYear()}
+          onChange={(e) => handleYearChange(e.target.value)}
+          className="mb-3 w-full rounded border border-slate-300 p-2 bg-white"
         />
 
         {/* Precio */}
@@ -94,27 +136,29 @@ export default function FilterSidebar({ onClose }) {
 
           <div className="flex gap-2">
             <input
-              name="priceMin"
               type="number"
               placeholder="Mín"
-              defaultValue={currentPriceMin}
-              className="w-full rounded border border-slate-300 p-2"
+              value={priceMin}
+              min="0"
+              onChange={(e) => handlePriceMinChange(e.target.value)}
+              className="w-full rounded border border-slate-300 p-2 bg-white"
             />
             <input
-              name="priceMax"
               type="number"
               placeholder="Máx"
-              defaultValue={currentPriceMax}
-              className="w-full rounded border border-slate-300 p-2"
+              value={priceMax}
+              min="0"
+              onChange={(e) => handlePriceMaxChange(e.target.value)}
+              className="w-full rounded border border-slate-300 p-2 bg-white"
             />
           </div>
         </div>
 
-        {/* botones */}
-        <div className="flex gap-2">
+        {/* Botones */}
+        <div className="flex gap-2 mt-2 w-full">
           <button
             type="submit"
-            className="w-full rounded bg-[var(--primary-600)] py-2 font-semibold text-white"
+            className="flex-1 min-w-0 rounded bg-[var(--primary-600)] py-2 font-semibold text-white"
           >
             Aplicar
           </button>
@@ -122,7 +166,7 @@ export default function FilterSidebar({ onClose }) {
           <button
             type="button"
             onClick={clearFilters}
-            className="w-full rounded border py-2 font-semibold"
+            className="flex-1 min-w-0 rounded border py-2 font-semibold bg-white text-slate-700"
           >
             Limpiar
           </button>
