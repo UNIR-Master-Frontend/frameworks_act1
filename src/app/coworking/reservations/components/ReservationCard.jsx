@@ -19,7 +19,7 @@ export default function ReservationCard({ reservation, onCancel }) {
   return (
     <div
       key={reservation.id}
-      className="col-span-4 rounded-xl overflow-hidden border-1 border-(--surface-200) "
+      className="col-span-12 md:col-span-6 lg:col-span-4 rounded-xl overflow-hidden border-1 border-(--surface-200) "
     >
       <div className="flex p-4 items-center bg-(--primary-700) text-white">
         <div className="space-info">
