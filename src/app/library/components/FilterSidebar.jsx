@@ -31,7 +31,7 @@ export default function FilterSidebar({ onClose }) {
   const [priceMin, setPriceMin] = useState('');
   const [priceMax, setPriceMax] = useState('');
 
-  // sync con URL (CLAVE)
+  // sync con URL
   useEffect(() => {
     setCategory((searchParams.get('category') || '').toLowerCase());
     setYear(searchParams.get('year') || '');
@@ -41,17 +41,20 @@ export default function FilterSidebar({ onClose }) {
 
   // validaciones
   const handleYearChange = (value) => {
-    if (value < 0) return;
+    const num = Number(value);
+    if (num < 0) return;
     setYear(value);
   };
 
   const handlePriceMinChange = (value) => {
-    if (value < 0) return;
+    const num = Number(value);
+    if (num < 0) return;
     setPriceMin(value);
   };
 
   const handlePriceMaxChange = (value) => {
-    if (value < 0) return;
+    const num = Number(value);
+    if (num < 0) return;
     setPriceMax(value);
   };
 
@@ -73,7 +76,7 @@ export default function FilterSidebar({ onClose }) {
 
     router.push(`${pathname}?${params.toString()}`);
 
-    if (onClose) onClose();
+    onClose?.();
   };
 
   // limpiar filtros
@@ -85,20 +88,12 @@ export default function FilterSidebar({ onClose }) {
 
     router.push(pathname);
 
-    if (onClose) onClose();
+    onClose?.();
   };
 
   return (
-    <aside
-      className="
-        bg-slate-100 p-5
-        w-full lg:w-64
-        lg:fixed lg:top-[90px] lg:left-0 lg:h-[calc(100vh-90px)]
-        border-r border-slate-200
-        overflow-y-auto
-        box-border
-      "
-    >
+    <aside className="bg-slate-100 p-5 w-full lg:w-64 lg:fixed lg:top-[90px] lg:left-0 lg:h-[calc(100vh-90px)] border-r border-slate-200 overflow-y-auto box-border">
+      
       <h3 className="mb-4 text-lg font-semibold text-slate-800">
         Filtros
       </h3>
