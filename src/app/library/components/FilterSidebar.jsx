@@ -25,21 +25,21 @@ export default function FilterSidebar({ onClose }) {
 
   const categories = isBooks ? bookCategories : magazineCategories;
 
-  // 🔥 estados
+  // estados
   const [category, setCategory] = useState('');
   const [year, setYear] = useState('');
   const [priceMin, setPriceMin] = useState('');
   const [priceMax, setPriceMax] = useState('');
 
-  // 🔄 sync con URL
+  // sync con URL (CLAVE)
   useEffect(() => {
-    setCategory(searchParams.get('category') || '');
+    setCategory((searchParams.get('category') || '').toLowerCase());
     setYear(searchParams.get('year') || '');
     setPriceMin(searchParams.get('priceMin') || '');
     setPriceMax(searchParams.get('priceMax') || '');
   }, [searchParams]);
 
-  // 🔐 validaciones
+  // validaciones
   const handleYearChange = (value) => {
     if (value < 0) return;
     setYear(value);
@@ -55,7 +55,7 @@ export default function FilterSidebar({ onClose }) {
     setPriceMax(value);
   };
 
-  // 🚀 aplicar filtros
+  // aplicar filtros
   const applyFilters = (e) => {
     e.preventDefault();
 
@@ -66,7 +66,7 @@ export default function FilterSidebar({ onClose }) {
 
     const params = new URLSearchParams();
 
-    if (category) params.set('category', category.toLowerCase());
+    if (category) params.set('category', category);
     if (year) params.set('year', year);
     if (priceMin) params.set('priceMin', priceMin);
     if (priceMax) params.set('priceMax', priceMax);
@@ -76,7 +76,7 @@ export default function FilterSidebar({ onClose }) {
     if (onClose) onClose();
   };
 
-  // 🧹 limpiar filtros
+  // limpiar filtros
   const clearFilters = () => {
     setCategory('');
     setYear('');
@@ -112,8 +112,9 @@ export default function FilterSidebar({ onClose }) {
           className="mb-3 w-full rounded border border-slate-300 p-2 bg-white"
         >
           <option value="">Todas</option>
+
           {categories.map((cat) => (
-            <option key={cat} value={cat}>
+            <option key={cat} value={cat.toLowerCase()}>
               {cat}
             </option>
           ))}
