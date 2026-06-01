@@ -1,11 +1,13 @@
 'use client';
+
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import MagazinesList from '@/app/library/components/MagazinesList/MagazinesList';
 import RecommendedMagazines from '@/app/library/components/RecommendedMagazines';
 import Top10Magazines from '@/app/library/components/Top10Magazines';
 
-export default function MagazinesPage() {
+function MagazinesPageContent() {
   const searchParams = useSearchParams();
 
   // 🔥 NORMALIZAR filtros (CLAVE)
@@ -28,5 +30,13 @@ export default function MagazinesPage() {
       <Top10Magazines />
       <RecommendedMagazines />
     </>
+  );
+}
+
+export default function MagazinesPage() {
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <MagazinesPageContent />
+    </Suspense>
   );
 }

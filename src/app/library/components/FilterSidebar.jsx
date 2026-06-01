@@ -1,8 +1,8 @@
 'use client';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 
-export default function FilterSidebar({ onClose }) {
+function FilterSidebarInner({ onClose }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -169,5 +169,13 @@ export default function FilterSidebar({ onClose }) {
         </div>
       </form>
     </aside>
+  );
+}
+
+export default function FilterSidebar(props) {
+  return (
+    <Suspense fallback={<aside className="bg-slate-100 p-5 w-full lg:w-64" />}>
+      <FilterSidebarInner {...props} />
+    </Suspense>
   );
 }

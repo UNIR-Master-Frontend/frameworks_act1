@@ -1,12 +1,13 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import BookList from '@/app/library/components/BookList';
 import RecommendedBooks from '@/app/library/components/RecommendedBooks';
 import Top10Books from '@/app/library/components/Top10Books';
 
-export default function BooksPage() {
+function BooksPageContent() {
   const searchParams = useSearchParams();
 
   const category = (searchParams.get('category') || '').toUpperCase();
@@ -26,5 +27,13 @@ export default function BooksPage() {
       <Top10Books />
       <RecommendedBooks />
     </>
+  );
+}
+
+export default function BooksPage() {
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <BooksPageContent />
+    </Suspense>
   );
 }
