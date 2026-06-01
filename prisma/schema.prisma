@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model categoria {
+  id     Int    @default(autoincrement())
+  nombre String @unique @db.VarChar
+}
+
+model estado_compra {
+  id     Int    @default(autoincrement())
+  nombre String @unique @db.VarChar
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model reserva {
+  id            Int       @default(autoincrement())
+  fecha_reserva DateTime  @db.Timestamp(6)
+  fecha_salida  DateTime? @db.Timestamp(6)
+  estado        Boolean?  @default(true)
+
+  @@ignore
+}
+
+model tipo {
+  id     Int    @default(autoincrement())
+  nombre String @unique @db.VarChar
+}
+
+model espacio {
+  id             Int             @id @default(autoincrement())
+  estado         String
+  capacidad      Int
+  imagen         String?         @db.VarChar(500)
+  estado_id      Int?
+  estado_espacio estado_espacio? @relation(fields: [estado_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model estado_espacio {
+  id      Int       @id @default(autoincrement())
+  nombre  String    @unique @db.VarChar(50)
+  espacio espacio[]
+}
