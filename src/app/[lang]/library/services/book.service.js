@@ -1,28 +1,43 @@
-import { API_BASE_URL } from '@/constants/url';
+﻿import { API_BASE_URL } from '@/constants/url';
+
+export const BOOKS_REVALIDATE_SECONDS = 15 * 60;
+export const BOOK_DETAIL_REVALIDATE_SECONDS = 60 * 60;
+
+const fetchJson = async (url, revalidate = BOOKS_REVALIDATE_SECONDS) => {
+  const response = await fetch(url, {
+    next: { revalidate },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Error fetching ${url}: ${response.status}`);
+  }
+
+  return response.json();
+};
 
 export const getBooks = async () => {
-  const response = await fetch(`${API_BASE_URL}/libros`);
-  return response.json();
+  return fetchJson(`${API_BASE_URL}/libros`);
 };
 
 export const getTop10Books = async () => {
-  const response = await fetch(`${API_BASE_URL}/libros/top10`);
-  return response.json();
+  return fetchJson(`${API_BASE_URL}/libros/top10`);
 };
 
 export const getRecommendedBooks = async () => {
-  const response = await fetch(`${API_BASE_URL}/recomendaciones/libros`);
-  return response.json();
+  return fetchJson(`${API_BASE_URL}/recomendaciones/libros`);
 };
 
 export const getBookById = async (id) => {
-  const response = await fetch(`${API_BASE_URL}/libros/${id}`);
-  return response.json();
+  return fetchJson(`${API_BASE_URL}/libros/${id}`, BOOK_DETAIL_REVALIDATE_SECONDS);
 };
 
 export const getSimilarBooks = async (id) => {
-  const response = await fetch(`${API_BASE_URL}/libros/${id}/similares`);
-  return response.json();
+  try {
+    return await fetchJson(`${API_BASE_URL}/libros/${id}/similares`, BOOK_DETAIL_REVALIDATE_SECONDS);
+  } catch (error) {
+    console.error('Error cargando libros similares:', error);
+    return [];
+  }
 };
 
 export const getBooksPurchasesByUserId = async (id) => {
@@ -31,12 +46,12 @@ export const getBooksPurchasesByUserId = async (id) => {
 };
 
 export const getBooksCategories = async () => {
-  const response = await fetch(`${API_BASE_URL}/categorias/libros`);
-  return response.json();
+  return fetchJson(`${API_BASE_URL}/categorias/libros`);
 };
 
 export const getBooksByCategory = async (categoria) => {
   const query = `categoria=${encodeURIComponent(categoria)}`;
-  const response = await fetch(`${API_BASE_URL}/libros?${query}`);
-  return response.json();
+  return fetchJson(`${API_BASE_URL}/libros?${query}`);
 };
+
+

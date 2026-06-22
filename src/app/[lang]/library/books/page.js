@@ -1,39 +1,42 @@
-'use client';
+﻿import { Suspense } from 'react';
 
-import { Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { getMessages } from '@/config/i18n';
+import BooksCatalog from '@/app/[lang]/library/components/BooksCatalog';
+import BooksCarousel from '@/app/[lang]/library/components/BooksCarousel';
+import {
+  getBooks,
+  getRecommendedBooks,
+  getTop10Books,
+} from '@/app/[lang]/library/services/book.service';
 
-import BookList from '@/app/[lang]/library/components/BookList';
-import RecommendedBooks from '@/app/[lang]/library/components/RecommendedBooks';
-import Top10Books from '@/app/[lang]/library/components/Top10Books';
+export const revalidate = 900;
 
-function BooksPageContent() {
-  const searchParams = useSearchParams();
+export default async function BooksPage({ params }) {
+  const { lang } = await params;
+  const messages = getMessages(lang).library;
+  const [booksData, topBooksData, recommendedBooksData] = await Promise.all([
+    getBooks(),
+    getTop10Books(),
+    getRecommendedBooks(),
+  ]);
 
-  const category = (searchParams.get('category') || '').toUpperCase();
-  const year = searchParams.get('year') || '';
-  const priceMin = searchParams.get('priceMin') || '';
-  const priceMax = searchParams.get('priceMax') || '';
+  const books = Array.isArray(booksData) ? booksData : [];
+  const topBooks = Array.isArray(topBooksData) ? topBooksData : [];
+  const recommendedBooks = Array.isArray(recommendedBooksData?.recomendaciones)
+    ? recommendedBooksData.recomendaciones
+    : [];
 
   return (
     <>
-      <BookList
-        category={category}
-        year={year}
-        priceMin={priceMin}
-        priceMax={priceMax}
-      />
-
-      <Top10Books />
-      <RecommendedBooks />
+      <Suspense fallback={null}>
+        <BooksCatalog
+          books={books}
+          title={messages.listBooks}
+          emptyMessage={messages.noBooks}
+        />
+      </Suspense>
+      <BooksCarousel title={messages.top10Books} books={topBooks} />
+      <BooksCarousel title={messages.recommendedBooks} books={recommendedBooks} />
     </>
-  );
-}
-
-export default function BooksPage() {
-  return (
-    <Suspense fallback={null}>
-      <BooksPageContent />
-    </Suspense>
   );
 }

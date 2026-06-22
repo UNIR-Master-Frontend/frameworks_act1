@@ -15,20 +15,26 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { fecha_reserva, fecha_salida, estado, usuario_id, espacio_id } = body
+    const { fecha_reserva, fecha_salida, activo, usuario_id, espacio_id } = body
 
     if (!fecha_reserva || !fecha_salida || !usuario_id || !espacio_id) {
       return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 })
     }
 
     const result = await pool.query(
-      `INSERT INTO public.reserva (fecha_reserva, fecha_salida, estado, usuario_id, espacio_id)
+      `INSERT INTO public.reserva (fecha_reserva, fecha_salida, activo, usuario_id, espacio_id)
        VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [fecha_reserva, fecha_salida, estado ?? false, usuario_id, espacio_id]
+      [fecha_reserva, fecha_salida, activo ?? true, usuario_id, espacio_id]
     )
 
     return NextResponse.json({ data: result.rows[0] }, { status: 201 })
-  } catch (error) {
-    return NextResponse.json({ error: 'Error al crear reserva' }, { status: 500 })
-  }
+} catch (error) {
+  console.error("ERROR AL CREAR RESERVA:")
+  console.error(error)
+
+  return NextResponse.json(
+    { error: 'Error al crear reserva' },
+    { status: 500 }
+  )
+}
 }

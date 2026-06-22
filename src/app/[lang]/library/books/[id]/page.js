@@ -1,35 +1,46 @@
-'use client';
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { getBookById } from '@/app/[lang]/library/services/book.service';
-import useLoading from '@/hooks/useLoading';
-import SimilarBooks from '@/app/[lang]/library/components/SimilarBooks';
+﻿import Image from 'next/image';
+import { notFound } from 'next/navigation';
+
+import { getMessages } from '@/config/i18n';
+import BooksCarousel from '@/app/[lang]/library/components/BooksCarousel';
+import BookPurchaseControls from '@/app/[lang]/library/components/BookPurchaseControls';
 import BackButton from '@/components/BackButton/BackButton';
+import {
+  getBookById,
+  getBooks,
+  getSimilarBooks,
+} from '@/app/[lang]/library/services/book.service';
 import styles from '@/app/[lang]/library/detail.module.css';
-import { useMessages } from '@/context/LanguageContext';
 
-export default function BookDetailPage() {
-  const { id } = useParams();
-  const [book, setBook] = useState(undefined);
-  const [counter, setCounter] = useState(1);
-  const { setLoading } = useLoading();
-  const t = useMessages().detail;
+export const revalidate = 3600;
+export const dynamicParams = true;
 
-  useEffect(() => {
-    if (id) {
-      setLoading(true);
-      getBookById(id)
-        .then((data) => setBook(data))
-        .finally(() => setLoading(false));
-    }
-  }, [id, setLoading]);
+export async function generateStaticParams() {
+  const books = await getBooks();
 
-  const addToCounter = (value) => {
-    setCounter((current) => Math.min(5, Math.max(1, current + value)));
-  };
+  if (!Array.isArray(books)) return [];
 
-  if (!book) return <></>;
+  return books
+    .filter((book) => book?.id !== undefined && book?.id !== null)
+    .map((book) => ({
+      id: String(book.id),
+    }));
+}
 
+export default async function BookDetailPage({ params }) {
+  const { id, lang } = await params;
+  const messages = getMessages(lang);
+  const t = messages.detail;
+  const [book, similarBooksData] = await Promise.all([
+    getBookById(id),
+    getSimilarBooks(id),
+  ]);
+
+  if (!book) {
+    notFound();
+  }
+
+  const similarBooks = Array.isArray(similarBooksData) ? similarBooksData : [];
   const originalPrice = Number((book.precio * 1.11).toFixed(2));
 
   return (
@@ -42,7 +53,13 @@ export default function BookDetailPage() {
         <div className={styles.detailGrid}>
           <div className={`${styles.visualPanel} ${styles.bookVisual}`}>
             <div className={styles.visualGlow} />
-            <img className={styles.visualImage} src="/images/jpg/book.jpg" alt={book.nombre} />
+            <Image
+              className={styles.visualImage}
+              src="/images/jpg/book.jpg"
+              alt={book.nombre}
+              fill
+              sizes="(min-width: 900px) 45vw, 100vw"
+            />
           </div>
 
           <div className={styles.contentPanel}>
@@ -63,30 +80,13 @@ export default function BookDetailPage() {
               </div>
             </section>
 
-            <section className={styles.purchaseCard}>
-              <h2 className={styles.purchaseTitle}>{t.quantity}</h2>
-              <div className={styles.purchaseActions}>
-                <div className={styles.quantityControls}>
-                  <button className={styles.quantityButton} onClick={() => addToCounter(-1)} disabled={counter === 1}>
-                    -
-                  </button>
-                  <input className={styles.quantityValue} id="quantity" type="number" value={counter} readOnly />
-                  <button className={styles.quantityButton} onClick={() => addToCounter(1)} disabled={counter === 5}>
-                    +
-                  </button>
-                </div>
-                <button className={styles.primaryButton} onClick={() => alert(t.purchaseSuccess)}>
-                  {t.buy}
-                </button>
-              </div>
-              <p className={styles.quantityHint}>{t.maxUnits}</p>
-            </section>
+            <BookPurchaseControls messages={t} />
           </div>
         </div>
       </div>
 
       <div className={styles.similarSection}>
-        <SimilarBooks id={book.id} />
+        <BooksCarousel title={messages.library.similarBooks} books={similarBooks} />
       </div>
     </>
   );

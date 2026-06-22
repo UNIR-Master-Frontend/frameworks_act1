@@ -1,42 +1,48 @@
-'use client';
+﻿import { Suspense } from 'react';
 
-import { Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { getMessages } from '@/config/i18n';
+import MagazinesCatalog from '@/app/[lang]/library/components/MagazinesCatalog';
+import MagazinesCarousel from '@/app/[lang]/library/components/MagazinesCarousel';
+import {
+  getMagazines,
+  getRecommendedMagazines,
+  getTop10Magazines,
+} from '@/app/[lang]/library/services/magazine.service';
 
-import MagazinesList from '@/app/[lang]/library/components/MagazinesList/MagazinesList';
-import RecommendedMagazines from '@/app/[lang]/library/components/RecommendedMagazines';
-import Top10Magazines from '@/app/[lang]/library/components/Top10Magazines';
+export const revalidate = 900;
 
-function MagazinesPageContent() {
-  const searchParams = useSearchParams();
+export default async function MagazinesPage({ params }) {
+  const { lang } = await params;
+  const messages = getMessages(lang).library;
+  const [magazinesData, topMagazinesData, recommendedMagazinesData] =
+    await Promise.all([
+      getMagazines(),
+      getTop10Magazines(),
+      getRecommendedMagazines(),
+    ]);
 
-  // 🔥 NORMALIZAR filtros (CLAVE)
-  const category = (searchParams.get('category') || '').toUpperCase();
-  const year = searchParams.get('year') || '';
-  const priceMin = searchParams.get('priceMin') || '';
-  const priceMax = searchParams.get('priceMax') || '';
+  const magazines = Array.isArray(magazinesData) ? magazinesData : [];
+  const topMagazines = Array.isArray(topMagazinesData) ? topMagazinesData : [];
+  const recommendedMagazines = Array.isArray(
+    recommendedMagazinesData?.recomendaciones,
+  )
+    ? recommendedMagazinesData.recomendaciones
+    : [];
 
   return (
     <>
-      {/* 📚 LISTADO */}
-      <MagazinesList
-        category={category}
-        year={year}
-        priceMin={priceMin}
-        priceMax={priceMax}
+      <Suspense fallback={null}>
+        <MagazinesCatalog
+          magazines={magazines}
+          title={messages.listMagazines}
+          emptyMessage={messages.noMagazines}
+        />
+      </Suspense>
+      <MagazinesCarousel title={messages.top10Magazines} magazines={topMagazines} />
+      <MagazinesCarousel
+        title={messages.recommendedMagazines}
+        magazines={recommendedMagazines}
       />
-
-      {/* 🔥 SECCIONES */}
-      <Top10Magazines />
-      <RecommendedMagazines />
     </>
-  );
-}
-
-export default function MagazinesPage() {
-  return (
-    <Suspense fallback={null}>
-      <MagazinesPageContent />
-    </Suspense>
   );
 }

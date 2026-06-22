@@ -1,6 +1,6 @@
-'use client';
+﻿'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import useUser from '@/hooks/useUser';
@@ -16,14 +16,12 @@ export default function LibraryLayout({ children }) {
   const lang = useLang();
   const messages = useMessages();
 
-  // detectar rutas
   const isBooksRoute = pathname.includes('/library/books');
   const isMagazinesRoute = pathname.includes('/library/magazines');
   const isPurchasesRoute = pathname.includes('/library/purchases');
 
   const showSidebar = isBooksRoute || isMagazinesRoute;
 
-  // detectar mobile
   const [isMobile, setIsMobile] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
 
@@ -38,7 +36,6 @@ export default function LibraryLayout({ children }) {
     return () => window.removeEventListener('resize', checkScreen);
   }, []);
 
-  // prefetch
   useEffect(() => {
     router.prefetch(`/${lang}/library/books`);
     router.prefetch(`/${lang}/library/magazines`);
@@ -47,8 +44,6 @@ export default function LibraryLayout({ children }) {
 
   return (
     <div className={styles.libraryShell}>
-
-      {/* NAV */}
       <div className={styles.subnav}>
         <Link
           href={`/${lang}/library/books`}
@@ -74,7 +69,6 @@ export default function LibraryLayout({ children }) {
         )}
       </div>
 
-      {/* BOTÓN SOLO MOBILE */}
       {showSidebar && isMobile && (
         <button
           className="fixed top-[90px] left-4 z-50 bg-[var(--primary-600)] text-white px-4 py-2 rounded shadow"
@@ -84,10 +78,12 @@ export default function LibraryLayout({ children }) {
         </button>
       )}
 
-      {/* SIDEBAR DESKTOP */}
-      {showSidebar && !isMobile && <FilterSidebar />}
+      {showSidebar && !isMobile && (
+        <Suspense fallback={null}>
+          <FilterSidebar />
+        </Suspense>
+      )}
 
-      {/* SIDEBAR MOBILE (DRAWER) */}
       {isMobile && (
         <div
           className={`fixed inset-0 z-50 transition ${
@@ -105,15 +101,16 @@ export default function LibraryLayout({ children }) {
               className="mb-4 text-sm font-semibold"
               onClick={() => setOpenFilters(false)}
             >
-              ✕ Cerrar
+              Cerrar
             </button>
 
-            <FilterSidebar onClose={() => setOpenFilters(false)} />
+            <Suspense fallback={null}>
+              <FilterSidebar onClose={() => setOpenFilters(false)} />
+            </Suspense>
           </div>
         </div>
       )}
 
-      {/* CONTENIDO */}
       <main
         className={`${styles.content} ${
           showSidebar && !isMobile ? styles.contentWithSidebar : ''
