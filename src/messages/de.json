@@ -145,9 +145,9 @@
     "magazineSummary": "{periodicidad} Zeitschrift vom Verlag {editorial}"
   },
   "auth": {
-    "title": "Anmelden",
-    "username": "Benutzer",
-    "password": "Passwort",
-    "submit": "Eintreten"
+    "welcome": "Willkommen",
+    "title": "Bei Nexus anmelden",
+    "subtitle": "Verwende dein Google-Konto, um auf die Plattform zuzugreifen.",
+    "continueWithGoogle": "Mit Google fortfahren"
   }
 }
