@@ -77,6 +77,19 @@
     "reservationSuccess": "Reservierung erfolgreich bestätigt! ✅",
     "reservationError": "Fehler beim Erstellen der Reservierung"
   },
+  "reservations": {
+    "title": "Meine Buchungen",
+    "subtitle": "Verwalte deine reservierten Coworking-Bereiche",
+    "emptyTitle": "📅 Du hast keine aktiven Buchungen",
+    "emptySubtitle": "Buche einen Coworking-Bereich, um zu beginnen",
+    "cardId": "Buchung ID:",
+    "space": "Bereich",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "cancel": "Buchung stornieren",
+    "confirmCancel": "Möchtest du diese Buchung wirklich stornieren?",
+    "cancelError": "Fehler beim Stornieren der Buchung"
+  },
   "library": {
     "title": "Ihre Universitätsbibliothek mit Co-Working-Spaces und Cafeteria in Aranjuez",
     "description": "Wir sind Ihr umfassender Universitätsraum, in dem Sie akademische Texte, kollaborative Lernbereiche und ein Café finden, das für Studenten entwickelt wurde.",

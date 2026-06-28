@@ -77,6 +77,19 @@
     "reservationSuccess": "¡Reserva confirmada exitosamente! ✅",
     "reservationError": "Error al crear la reserva"
   },
+  "reservations": {
+    "title": "Mis Reservas",
+    "subtitle": "Gestiona tus espacios de co-working reservados",
+    "emptyTitle": "📅 No tienes reservas activas",
+    "emptySubtitle": "Reserva un espacio de co-working para empezar",
+    "cardId": "Reserva ID:",
+    "space": "Espacio",
+    "checkIn": "Entrada",
+    "checkOut": "Salida",
+    "cancel": "Cancelar Reserva",
+    "confirmCancel": "¿Estás seguro de cancelar esta reserva?",
+    "cancelError": "Error al cancelar la reserva"
+  },
   "library": {
     "title": "Tu librería universitaria con espacios de coworking y cafetería en Aranjuez",
     "description": "Somos tu espacio universitario integral donde encontrarás textos académicos, zonas de estudio colaborativo y una cafetería pensada para estudiantes.",
