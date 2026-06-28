@@ -1,25 +1,20 @@
-import pool from "@/helpers/db";
 import { NextResponse } from "next/server";
+import { getBookById } from "@/server/libreria";
 
 export async function GET(request, { params }) {
   try {
     const { id } = await params;
 
-    const result = await pool.query(`
-        SELECT producto.*, tipo_producto.nombre AS tipo_producto_nombre
-        FROM public.producto
-        JOIN tipo_producto ON tipo_producto.id = producto.tipo_producto_id
-        WHERE producto.id = ${id} AND tipo_producto.id = 1
-    `);
+    const book = await getBookById(id);
 
-    if (!result.rows.length) {
+    if (!book) {
       return NextResponse.json(
         { error: "El registro no existe" },
         { status: 400 },
       );
     }
 
-    return NextResponse.json(result.rows[0]);
+    return NextResponse.json(book);
   } catch (error) {
     console.log(error);
     return NextResponse.json(

@@ -9,7 +9,7 @@ import {
   getBookById,
   getBooks,
   getSimilarBooks,
-} from '@/app/[lang]/library/services/book.service';
+} from '@/server/libreria';
 import styles from '@/app/[lang]/library/detail.module.css';
 
 export const revalidate = 3600;
@@ -80,7 +80,7 @@ export default async function BookDetailPage({ params }) {
               </div>
             </section>
 
-            <BookPurchaseControls messages={t} />
+            <BookPurchaseControls book={book} messages={t} />
           </div>
         </div>
       </div>

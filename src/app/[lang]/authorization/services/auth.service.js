@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "@/constants/url";
+import { USERS_API_BASE_URL } from "@/constants/url";
 
 /**
  * Servicio de autenticación
@@ -6,7 +6,7 @@ import { API_BASE_URL } from "@/constants/url";
  */
 export const login = async (body) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await fetch(`${USERS_API_BASE_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

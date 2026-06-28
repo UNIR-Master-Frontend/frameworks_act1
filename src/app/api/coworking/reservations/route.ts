@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import pool from '@/helpers/db'
+import { createReservation, getReservations } from '@/server/coworking'
 
 // GET - Listado de reservas
 export async function GET() {
   try {
-    const result = await pool.query('SELECT * FROM public.reserva')
-    return NextResponse.json({ data: result.rows })
+    const reservations = await getReservations()
+    return NextResponse.json({ data: reservations })
   } catch (error) {
     return NextResponse.json({ error: 'Error al obtener reservas' }, { status: 500 })
   }
@@ -21,13 +21,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 })
     }
 
-    const result = await pool.query(
-      `INSERT INTO public.reserva (fecha_reserva, fecha_salida, activo, usuario_id, espacio_id)
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [fecha_reserva, fecha_salida, activo ?? true, usuario_id, espacio_id]
-    )
+    const reservation = await createReservation({
+      fecha_reserva,
+      fecha_salida,
+      activo: activo ?? true,
+      usuario_id,
+      espacio_id,
+    })
 
-    return NextResponse.json({ data: result.rows[0] }, { status: 201 })
+    return NextResponse.json({ data: reservation }, { status: 201 })
 } catch (error) {
   console.error("ERROR AL CREAR RESERVA:")
   console.error(error)

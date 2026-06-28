@@ -7,7 +7,7 @@ import {
   getMagazines,
   getRecommendedMagazines,
   getTop10Magazines,
-} from '@/app/[lang]/library/services/magazine.service';
+} from '@/server/libreria';
 
 export const revalidate = 900;
 
@@ -23,10 +23,8 @@ export default async function MagazinesPage({ params }) {
 
   const magazines = Array.isArray(magazinesData) ? magazinesData : [];
   const topMagazines = Array.isArray(topMagazinesData) ? topMagazinesData : [];
-  const recommendedMagazines = Array.isArray(
-    recommendedMagazinesData?.recomendaciones,
-  )
-    ? recommendedMagazinesData.recomendaciones
+  const recommendedMagazines = Array.isArray(recommendedMagazinesData)
+    ? recommendedMagazinesData
     : [];
 
   return (

@@ -4,6 +4,7 @@ import useUser from '@/hooks/useUser';
 import useLoading from '@/hooks/useLoading';
 import { getBooksPurchasesByUserId } from '@/app/[lang]/library/services/book.service';
 import { getMagazinesPurchasesByUserId } from '@/app/[lang]/library/services/magazine.service';
+import { getPurchaseUserId } from '@/app/[lang]/library/services/purchase.service';
 import BooksCarousel from '@/app/[lang]/library/components/BooksCarousel';
 import MagazinesCarousel from '@/app/[lang]/library/components/MagazinesCarousel';
 import { useMessages } from '@/context/LanguageContext';
@@ -16,11 +17,18 @@ export default function PurchasesPage() {
   const t = useMessages().library;
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setBooks([]);
+      setMagazines([]);
+      return;
+    }
+
+    const userId = getPurchaseUserId(user);
+
     setLoading(true);
     Promise.all([
-      getBooksPurchasesByUserId(user.id),
-      getMagazinesPurchasesByUserId(user.id),
+      getBooksPurchasesByUserId(userId),
+      getMagazinesPurchasesByUserId(userId),
     ])
       .then(([booksData, magazinesData]) => {
         setBooks(Array.isArray(booksData) ? booksData : []);

@@ -1,4 +1,4 @@
-import { getSpaces } from "@/services/coworking.service";
+import { getSpaces } from "@/server/coworking";
 import { getMessages } from "@/config/i18n";
 import SpacesGrid from "./components/SpacesGrid";
 

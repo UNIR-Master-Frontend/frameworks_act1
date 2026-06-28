@@ -18,9 +18,9 @@ export default function BooksCarousel({
 
   return (
     <Carousel title={title}>
-      {books.map((book) => (
+      {books.map((book, index) => (
         <div
-          key={book.id + book.nombre}
+          key={`${book.detalle_compra_id ?? book.compra_id ?? 'book'}-${book.id}-${index}`}
           className="carousel-item"
         >
           <Book book={book} />

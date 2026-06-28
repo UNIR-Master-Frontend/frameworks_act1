@@ -5,8 +5,11 @@ import Magazine from './Magazine/Magazine';
 export default function MagazinesCarousel({ title = '', magazines = [], emptyMessage = '' }) {
   return Array.isArray(magazines) && magazines.length ? (
     <Carousel title={title}>
-      {magazines.map((magazine) => (
-        <div className="carousel-item" key={magazine.id + magazine.nombre}>
+      {magazines.map((magazine, index) => (
+        <div
+          className="carousel-item"
+          key={`${magazine.detalle_compra_id ?? magazine.compra_id ?? 'magazine'}-${magazine.id}-${index}`}
+        >
           <Magazine magazine={magazine} />
         </div>
       ))}

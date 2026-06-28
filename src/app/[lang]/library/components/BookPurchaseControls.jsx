@@ -1,13 +1,30 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
+import useUser from '@/hooks/useUser';
+import { createPurchase } from '@/app/[lang]/library/services/purchase.service';
 import styles from '@/app/[lang]/library/detail.module.css';
 
-export default function BookPurchaseControls({ messages }) {
+export default function BookPurchaseControls({ book, messages }) {
+  const { user } = useUser();
   const [counter, setCounter] = useState(1);
+  const [isBuying, setIsBuying] = useState(false);
 
   const addToCounter = (value) => {
     setCounter((current) => Math.min(5, Math.max(1, current + value)));
+  };
+
+  const handlePurchase = async () => {
+    try {
+      setIsBuying(true);
+      await createPurchase({ product: book, quantity: counter, user });
+      alert(messages.purchaseSuccess);
+    } catch (error) {
+      console.error('Error comprando libro:', error);
+      alert(error.message);
+    } finally {
+      setIsBuying(false);
+    }
   };
 
   return (
@@ -18,7 +35,7 @@ export default function BookPurchaseControls({ messages }) {
           <button
             className={styles.quantityButton}
             onClick={() => addToCounter(-1)}
-            disabled={counter === 1}
+            disabled={counter === 1 || isBuying}
           >
             -
           </button>
@@ -32,14 +49,15 @@ export default function BookPurchaseControls({ messages }) {
           <button
             className={styles.quantityButton}
             onClick={() => addToCounter(1)}
-            disabled={counter === 5}
+            disabled={counter === 5 || isBuying}
           >
             +
           </button>
         </div>
         <button
           className={styles.primaryButton}
-          onClick={() => alert(messages.purchaseSuccess)}
+          onClick={handlePurchase}
+          disabled={isBuying}
         >
           {messages.buy}
         </button>

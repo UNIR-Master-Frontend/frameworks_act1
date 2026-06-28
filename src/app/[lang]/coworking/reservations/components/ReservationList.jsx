@@ -7,7 +7,9 @@ export default function ReservationList({ reservations = [] }) {
   const [reservationList, setReservationList] = useState(reservations);
 
   const onCancel = (reservationId) => {
-    const index = reservationList.findIndex((r) => r.id !== reservationId);
+    const index = reservationList.findIndex((r) => r.id === reservationId);
+    if (index === -1) return;
+
     const newArray = reservationList.toSpliced(index, 1);
     setReservationList(newArray);
   };

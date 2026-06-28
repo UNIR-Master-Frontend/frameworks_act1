@@ -31,14 +31,10 @@ export default function ReservationModal({ isOpen, onClose, space = {} }) {
       salida.setHours(salida.getHours() + 8);
 
       const reservaData = {
-        reservas: [
-          {
-            espacioId: space.id,
-            fecha_reserva: entrada.toISOString(),
-            fecha_salida: salida.toISOString(),
-            usuariosId: [1],
-          },
-        ],
+        espacio_id: space.id,
+        fecha_reserva: entrada.toISOString(),
+        fecha_salida: salida.toISOString(),
+        usuario_id: 1,
       };
 
       await createReservation(reservaData);

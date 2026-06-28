@@ -7,7 +7,7 @@ import {
   getBooks,
   getRecommendedBooks,
   getTop10Books,
-} from '@/app/[lang]/library/services/book.service';
+} from '@/server/libreria';
 
 export const revalidate = 900;
 
@@ -22,8 +22,8 @@ export default async function BooksPage({ params }) {
 
   const books = Array.isArray(booksData) ? booksData : [];
   const topBooks = Array.isArray(topBooksData) ? topBooksData : [];
-  const recommendedBooks = Array.isArray(recommendedBooksData?.recomendaciones)
-    ? recommendedBooksData.recomendaciones
+  const recommendedBooks = Array.isArray(recommendedBooksData)
+    ? recommendedBooksData
     : [];
 
   return (

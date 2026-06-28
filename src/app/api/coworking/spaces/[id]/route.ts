@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import pool from "@/helpers/db";
+import { getSpaceById } from "@/server/coworking";
 
 export async function GET(
   req: NextRequest,
@@ -8,21 +8,9 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const result = await pool.query(
-      `
-      SELECT
-        e.id,
-        ee.nombre AS estado,
-        e.capacidad
-      FROM public.espacio e
-      INNER JOIN public.estado_espacio ee
-        ON e.estado_id = ee.id
-      WHERE e.id = $1
-      `,
-      [Number(id)]
-    );
+    const space = await getSpaceById(id);
 
-    if (result.rowCount === 0) {
+    if (!space) {
       return NextResponse.json(
         { error: "Espacio no encontrado" },
         { status: 404 }
@@ -30,7 +18,7 @@ export async function GET(
     }
 
     return NextResponse.json({
-      data: result.rows[0],
+      data: space,
     });
   } catch (error: any) {
     console.error("ERROR BD:", error);

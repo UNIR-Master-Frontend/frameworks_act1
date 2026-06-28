@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import pool from "@/helpers/db";
+import { deleteReservation } from "@/server/coworking";
 
 export async function DELETE(
   req: NextRequest,
@@ -8,14 +8,9 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    console.log("ID recibido:", id);
+    const reservation = await deleteReservation(id);
 
-    const result = await pool.query(
-      "DELETE FROM public.reserva WHERE id = $1 RETURNING *",
-      [Number(id)]
-    );
-
-    if (result.rowCount === 0) {
+    if (!reservation) {
       return NextResponse.json(
         { error: "Reserva no encontrada" },
         { status: 404 }
@@ -23,7 +18,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({
-      data: result.rows[0],
+      data: reservation,
     });
   } catch (error) {
     console.error(error);

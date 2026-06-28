@@ -1,4 +1,4 @@
-import { getReservations } from "@/services/coworking.service";
+import { getReservations } from "@/server/coworking";
 import { getMessages } from "@/config/i18n";
 import ReservationList from "./components/ReservationList";
 

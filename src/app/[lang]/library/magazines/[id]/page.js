@@ -9,7 +9,7 @@ import {
   getMagazineById,
   getMagazines,
   getSimilarMagazines,
-} from '@/app/[lang]/library/services/magazine.service';
+} from '@/server/libreria';
 import styles from '@/app/[lang]/library/detail.module.css';
 
 export const revalidate = 3600;

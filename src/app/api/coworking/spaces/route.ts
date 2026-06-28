@@ -1,21 +1,12 @@
 import { NextResponse } from "next/server";
-import pool from "@/helpers/db";
+import { getSpaces } from "@/server/coworking";
 
 export async function GET() {
   try {
-    const result = await pool.query(`
-      SELECT
-          e.id,
-          ee.nombre AS estado,
-          e.capacidad
-      FROM public.espacio e
-      INNER JOIN public.estado_espacio ee
-          ON e.estado_id = ee.id
-      ORDER BY e.id
-    `);
+    const spaces = await getSpaces();
 
     return NextResponse.json({
-      data: result.rows,
+      data: spaces,
     });
   } catch (error) {
     return NextResponse.json(
