@@ -9,7 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@auth0/nextjs-auth0": "~4.23.0",
     "@tailwindcss/postcss": "^4.2.2",
+    "install": "^0.13.0",
     "next": "16.2.3",
     "pg": "^8.21.0",
     "postcss": "^8.5.9",

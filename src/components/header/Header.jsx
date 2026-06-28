@@ -18,7 +18,7 @@ export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const { user, setUserLogin } = useUser();
+  const { user, logout } = useUser();
 
   const lang = useLang();
   const messages = useMessages();
@@ -54,7 +54,11 @@ export const Header = () => {
           />
           <label htmlFor="hamburguer">
             <Image
-              src={menuOpen ? "/images/svg/close-icon.svg" : "/images/svg/menu-hamburger.svg"}
+              src={
+                menuOpen
+                  ? "/images/svg/close-icon.svg"
+                  : "/images/svg/menu-hamburger.svg"
+              }
               alt="icono de menú"
               width={24}
               height={24}
@@ -65,10 +69,28 @@ export const Header = () => {
         {/* Lógica condicional usando el módulo CSS */}
         <nav className={menuOpen ? styles["nav-open"] : ""}>
           <ul>
-            <NavItem label={messages.nav.home} path={withLang("/")} onClick={closeMenu} />
-            <NavItem label={messages.nav.library} path={withLang("/library")} onClick={closeMenu} />
-            <NavItem label={messages.nav.coworking} path={withLang("/coworking")} onClick={closeMenu} />
-            <li style={{ listStyle: "none", display: "flex", alignItems: "center" }}>
+            <NavItem
+              label={messages.nav.home}
+              path={withLang("/")}
+              onClick={closeMenu}
+            />
+            <NavItem
+              label={messages.nav.library}
+              path={withLang("/library")}
+              onClick={closeMenu}
+            />
+            <NavItem
+              label={messages.nav.coworking}
+              path={withLang("/coworking")}
+              onClick={closeMenu}
+            />
+            <li
+              style={{
+                listStyle: "none",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
               <LanguageSwitcher />
             </li>
             <li className={styles["button-group"]}>
@@ -79,7 +101,7 @@ export const Header = () => {
                     label={messages.nav.logout}
                     variant="primary"
                     onClick={() => {
-                      setUserLogin(undefined);
+                      logout();
                       closeMenu();
                     }}
                   />
@@ -89,7 +111,7 @@ export const Header = () => {
                   label={messages.nav.login}
                   variant="primary"
                   onClick={() => {
-                    router.push(withLang("/auth"));
+                    router.push(withLang("/authorization"));
                     closeMenu();
                   }}
                 />

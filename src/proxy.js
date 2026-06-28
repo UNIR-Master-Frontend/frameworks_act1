@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from "@/config/i18n";
+import { auth0 } from "./lib/auth0";
 
-export function middleware(request) {
+export async function proxy(request) {
   const { pathname } = request.nextUrl;
 
+  if (pathname.startsWith("/auth")) {
+    return await auth0.middleware(request);
+  }
+
   const pathnameHasLanguage = SUPPORTED_LANGUAGES.some(
-    (lang) => pathname === `/${lang}` || pathname.startsWith(`/${lang}/`)
+    (lang) => pathname === `/${lang}` || pathname.startsWith(`/${lang}/`),
   );
 
   if (pathnameHasLanguage) {
