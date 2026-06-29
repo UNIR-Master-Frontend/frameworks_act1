@@ -284,12 +284,10 @@ export default function SpaceDetailModal({
                 </div>
                 <button
                   onClick={onReserve}
-                  disabled={space.estado !== "disponible"}
+                  disabled={!space.disponible}
                   className="w-full px-6 py-4 bg-purple-600 text-white text-base lg:text-lg font-bold rounded-xl transition-all hover:bg-purple-700 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {space.estado === "disponible"
-                    ? t.bookButton
-                    : t.notAvailable}
+                  {space.disponible ? t.bookButton : t.notAvailable}
                 </button>
                 <p className="hidden lg:block text-sm text-gray-500 mt-6">
                   {t.cancelationPolicy}
